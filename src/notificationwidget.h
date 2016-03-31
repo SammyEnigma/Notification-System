@@ -7,7 +7,8 @@ class NotificationWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit NotificationWidget(QWidget *parent = 0, QPixmap icon, QString msg);
+    explicit NotificationWidget(QPixmap icon, QString msg, QWidget *parent = 0);
+    ~NotificationWidget();
 
 private:
     QTimer *m_timeout;
@@ -20,5 +21,6 @@ signals:
     void deleted();
     void clicked();
 };
+
 
 #endif // NOTIFICATIONWIDGET_H

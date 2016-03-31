@@ -1,7 +1,7 @@
 #include "notificationwidget.h"
 #include <QTimer>
 
-NotificationWidget::NotificationWidget(QWidget *parent, QPixmap icon, QString msg) : QWidget(parent)
+NotificationWidget::NotificationWidget(QPixmap icon, QString msg, QWidget *parent) : QWidget(parent)
 {
     Q_UNUSED(icon)
     Q_UNUSED(msg)
@@ -11,7 +11,18 @@ NotificationWidget::NotificationWidget(QWidget *parent, QPixmap icon, QString ms
     m_timeout->start(3000);
 }
 
-void NotificationWidget::fadeAway()
+NotificationWidget::~NotificationWidget()
 {
+    if (m_timeout->isActive())
+        m_timeout->stop();
 
+    delete m_timeout;
+    m_timeout = Q_NULLPTR;
+}
+
+void NotificationWidget::fadeOut()
+{
+    this->hide();
+    emit deleted();
+    this->deleteLater();
 }
