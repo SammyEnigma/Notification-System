@@ -3,6 +3,8 @@
 
 #include <QtWidgets/QWidget>
 
+class QTimeLine;
+
 class NotificationWidget : public QWidget
 {
     Q_OBJECT
@@ -10,16 +12,19 @@ public:
     explicit NotificationWidget(QPixmap icon, QString msg, QWidget *parent = 0);
     ~NotificationWidget();
 
-private:
-    QTimer *m_timeout;
+protected:
+    void showEvent(QShowEvent *ev);
 
 private slots:
-    void fadeAway();
-
+    void fadeOut();
 
 signals:
     void deleted();
     void clicked();
+
+private:
+    QTimer *m_timeout;
+    QTimeLine *m_fader;
 };
 
 

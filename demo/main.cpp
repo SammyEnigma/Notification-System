@@ -1,8 +1,13 @@
 #include <QApplication>
+#include "..\src\notificationwidget.h"
+
+
 
 int main(int argc, char *argv[])
 {
-    Q_UNUSED(argc)
-    Q_UNUSED(argv)
-    return 0;
+    QApplication app(argc, argv);
+    NotificationWidget *w = new NotificationWidget(QPixmap(), QString("Test string"), 0);
+
+    w->deleteLater();
+    return app.exec();
 }
