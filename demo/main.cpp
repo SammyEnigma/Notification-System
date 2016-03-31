@@ -1,5 +1,5 @@
 #include <QApplication>
-#include "..\src\notificationwidget.h"
+#include "notificationwidget.h"
 
 
 
