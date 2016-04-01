@@ -9,11 +9,11 @@ class NotificationWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit NotificationWidget(QPixmap icon, QString msg, QWidget *parent = 0);
+    explicit NotificationWidget(QString title, QString message, QPixmap icon = QPixmap());
     ~NotificationWidget();
 
 protected:
-    void showEvent(QShowEvent *ev);
+    void showEvent(QShowEvent *ev) Q_DECL_OVERRIDE;
 
 private slots:
     void fadeOut();
