@@ -6,8 +6,9 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    NotificationWidget *w = new NotificationWidget(QString("Title"), QString("Message"), QPixmap());
 
-    w->deleteLater();
+    NotificationWidget *w = new NotificationWidget(QString("Title"), QString("Message"), QPixmap());
+    w->show();
+
     return app.exec();
 }
