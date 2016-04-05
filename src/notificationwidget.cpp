@@ -6,6 +6,8 @@
 #include <QScreen>
 #include <QApplication>
 #include <QLabel>
+#include <QFile>
+#include <QDebug>
 
 NotificationWidget::NotificationWidget(QString title, QString message, QPixmap icon)
     : QWidget(0),
@@ -29,7 +31,13 @@ NotificationWidget::NotificationWidget(QString title, QString message, QPixmap i
 
     QWidget *displayWidget = new QWidget;
     displayWidget->setGeometry(0, 0, this->width(), this->height());
-    displayWidget->setStyleSheet(".QWidget{ background-color: rgba(0, 0, 0, 75%); }");
+    QFile widgetStyle(":/styles/qss/widget.css");
+    if (widgetStyle.open(QFile::ReadOnly)) {
+        qDebug() << " Successful";
+
+    } else {
+        qDebug() << "Failed";
+    }
 
     // 96 pixels = 1 logical inch. The standart DPI settings 100% (96 DPI)
     int zoom_app = qApp->primaryScreen()->logicalDotsPerInch() / 96.0;
