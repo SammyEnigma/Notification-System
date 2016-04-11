@@ -15,10 +15,11 @@ public:
 protected:
     void showEvent(QShowEvent *ev) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *ev) Q_DECL_OVERRIDE;
-
+    void setVisible(bool visible) Q_DECL_OVERRIDE;
 
 private slots:
-    void fadeOut();
+    void faderValueChanged(qreal value);
+    void faderFinished();
 
 signals:
     void deleted();

@@ -6,18 +6,13 @@
 #include <QScreen>
 #include <QApplication>
 #include <QLabel>
-#include <QFile>
 #include <QDebug>
 
 NotificationWidget::NotificationWidget(QString title, QString message, QPixmap icon)
     : QWidget(0),
       m_timeout(new QTimer(this)),
-      m_fader(new QTimeLine(300, this))
+      m_fader(new QTimeLine(500, this))
 {
-    Q_UNUSED(icon)
-    Q_UNUSED(message)
-    Q_UNUSED(title)
-
     setWindowFlags(Qt::Tool |
                    Qt::FramelessWindowHint |
                    Qt::WindowSystemMenuHint |
@@ -82,22 +77,33 @@ NotificationWidget::NotificationWidget(QString title, QString message, QPixmap i
     container->addWidget(displayWidget);
     setLayout(container);
 
-    connect(m_timeout, &QTimer::timeout, this, &NotificationWidget::fadeOut);
-    m_timeout->start(3000);
+    connect(m_timeout, &QTimer::timeout, this, &NotificationWidget::hide);
+
+    connect(m_fader, &QTimeLine::valueChanged, this, &NotificationWidget::faderValueChanged);
+    connect(m_fader, &QTimeLine::finished, this, &NotificationWidget::faderFinished);
 }
 
 NotificationWidget::~NotificationWidget()
 {
     if (m_timeout->isActive())
         m_timeout->stop();
-
     delete m_timeout;
     m_timeout = Q_NULLPTR;
+
+    if (m_fader->state() != QTimeLine::NotRunning)
+        m_fader->stop();
+    delete m_fader;
+    m_fader = Q_NULLPTR;
 }
 
 void NotificationWidget::showEvent(QShowEvent *ev)
 {
+    setWindowOpacity(0.0);
+
     QWidget::showEvent(ev);
+
+    m_fader->setDirection(QTimeLine::Forward);
+    m_fader->start();
 }
 
 void NotificationWidget::mousePressEvent(QMouseEvent *ev)
@@ -106,9 +112,30 @@ void NotificationWidget::mousePressEvent(QMouseEvent *ev)
     QWidget::mousePressEvent(ev);
 }
 
-void NotificationWidget::fadeOut()
+void NotificationWidget::setVisible(bool visible)
 {
-    this->hide();
-    emit deleted();
-    this->deleteLater();
+    qDebug() << Q_FUNC_INFO;
+    if (!visible && m_fader->direction() == QTimeLine::Forward) {
+        m_fader->setDirection(QTimeLine::Backward);
+        m_fader->start();
+    } else {
+        QWidget::setVisible(visible);
+    }
+}
+
+void NotificationWidget::faderValueChanged(qreal value)
+{
+    setWindowOpacity(value);
+}
+
+void NotificationWidget::faderFinished()
+{
+    if (m_fader->direction() == QTimeLine::Forward) {
+        // starting timer after fader finish work and widget opacity is 1.0
+        m_timeout->start(3000);
+    } else {
+        // In case of backward direction
+        emit deleted();
+        this->deleteLater();
+    }
 }
