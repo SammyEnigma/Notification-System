@@ -14,6 +14,8 @@ public:
 
 protected:
     void showEvent(QShowEvent *ev) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *ev) Q_DECL_OVERRIDE;
+
 
 private slots:
     void fadeOut();

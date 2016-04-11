@@ -28,40 +28,52 @@ NotificationWidget::NotificationWidget(QString title, QString message, QPixmap i
     setAttribute(Qt::WA_TranslucentBackground, true);
 
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setCursor(QCursor(Qt::PointingHandCursor));
 
     QWidget *displayWidget = new QWidget;
     displayWidget->setGeometry(0, 0, this->width(), this->height());
-    QFile widgetStyle(":/styles/qss/widget.css");
-    if (widgetStyle.open(QFile::ReadOnly)) {
-        qDebug() << " Successful";
-
-    } else {
-        qDebug() << "Failed";
-    }
+    displayWidget->setStyleSheet(".QWidget { "
+                                    "background-color: rgba(0, 0, 0, 75%); "
+                                    "border-width: 1pt;"
+                                    "border-style: solid;"
+                                    "border-radius: 10pt;"
+                                    "border-color: #555555; }"
+                                 ".QWidget:hover { "
+                                    "background-color: rgba(68, 68, 68, 75%);"
+                                    "border-width: 2pt;"
+                                    "border-style: solid;"
+                                    "border-radius: 10pt;"
+                                    "border-color: #ffffff; }");
 
     // 96 pixels = 1 logical inch. The standart DPI settings 100% (96 DPI)
-    int zoom_app = qApp->primaryScreen()->logicalDotsPerInch() / 96.0;
-    zoom_app /= devicePixelRatio();
+    int zoom = qApp->primaryScreen()->logicalDotsPerInch() / 96.0;
+    zoom /= devicePixelRatio();
 
     QLabel *icon_ = new QLabel;
     icon_->setPixmap(icon);
-    icon_->setMaximumSize(32 * zoom_app, 32 * zoom_app);
+    icon_->setMaximumSize(32 * zoom, 32 * zoom);
 
-    QLabel *title_ = new QLabel(title);
-    title_->setMaximumSize(255 * zoom_app, 50 * zoom_app);
-    title_->setWordWrap(true);
-    //title_->setText(title);
+    QLabel *header = new QLabel(title);
+    header->setMaximumSize(255 * zoom, 50 * zoom);
+    header->setWordWrap(true);
+    header->setStyleSheet("QLabel { "
+                            "color: #ffffff;"
+                            "font-weight: bold;"
+                            "font-size: 12pt; }");
 
-    QLabel *message_ = new QLabel(message);
-    message_->setMaximumSize(255 * zoom_app, 100 * zoom_app);
-    message_->setWordWrap(true);
+    QLabel *body = new QLabel(message);
+    body->setMaximumSize(255 * zoom, 100 * zoom);
+    body->setWordWrap(true);
+    body->setStyleSheet("QLabel { "
+                            "color: #ffffff;"
+                            "font-size: 10pt; }");
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->addWidget(icon_);
 
     QVBoxLayout *textLayout = new QVBoxLayout;
-    textLayout->addWidget(title_);
-    textLayout->addWidget(message_);
+    textLayout->addWidget(header);
+    textLayout->addWidget(body);
 
     mainLayout->addLayout(textLayout);
     displayWidget->setLayout(mainLayout);
@@ -69,7 +81,6 @@ NotificationWidget::NotificationWidget(QString title, QString message, QPixmap i
     QHBoxLayout *container = new QHBoxLayout;
     container->addWidget(displayWidget);
     setLayout(container);
-
 
     connect(m_timeout, &QTimer::timeout, this, &NotificationWidget::fadeOut);
     m_timeout->start(3000);
@@ -87,6 +98,12 @@ NotificationWidget::~NotificationWidget()
 void NotificationWidget::showEvent(QShowEvent *ev)
 {
     QWidget::showEvent(ev);
+}
+
+void NotificationWidget::mousePressEvent(QMouseEvent *ev)
+{
+    emit clicked();
+    QWidget::mousePressEvent(ev);
 }
 
 void NotificationWidget::fadeOut()

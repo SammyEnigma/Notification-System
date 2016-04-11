@@ -3,8 +3,3 @@ SOURCES += \
 
 HEADERS += \
     notificationwidget.h
-
-RESOURCES += \
-    $$PWD/notificationwidget.qrc
-
-DISTFILES +=
