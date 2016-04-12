@@ -12,6 +12,9 @@ public:
     explicit NotificationWidget(QString title, QString message, QPixmap icon = QPixmap());
     ~NotificationWidget();
 
+    bool fading() const;
+    void setFading(bool fading);
+
 protected:
     void showEvent(QShowEvent *ev) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *ev) Q_DECL_OVERRIDE;
@@ -28,6 +31,7 @@ signals:
 private:
     QTimer *m_timeout;
     QTimeLine *m_fader;
+    bool m_fading;
 };
 
 

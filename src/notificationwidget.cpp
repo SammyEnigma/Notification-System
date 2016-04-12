@@ -11,7 +11,8 @@
 NotificationWidget::NotificationWidget(QString title, QString message, QPixmap icon)
     : QWidget(0),
       m_timeout(new QTimer(this)),
-      m_fader(new QTimeLine(500, this))
+      m_fader(new QTimeLine(500, this)),
+      m_fading(true)
 {
     setWindowFlags(Qt::Tool |
                    Qt::FramelessWindowHint |
@@ -94,16 +95,22 @@ NotificationWidget::~NotificationWidget()
         m_fader->stop();
     delete m_fader;
     m_fader = Q_NULLPTR;
+
+    emit deleted();
 }
 
 void NotificationWidget::showEvent(QShowEvent *ev)
 {
-    setWindowOpacity(0.0);
+    setWindowOpacity( m_fading ? 0.0 : 1.0 );
 
     QWidget::showEvent(ev);
 
-    m_fader->setDirection(QTimeLine::Forward);
-    m_fader->start();
+    if (m_fading) {
+        m_fader->setDirection(QTimeLine::Forward);
+        m_fader->start();
+    } else {
+        m_timeout->start(3000);
+    }
 }
 
 void NotificationWidget::mousePressEvent(QMouseEvent *ev)
@@ -115,10 +122,12 @@ void NotificationWidget::mousePressEvent(QMouseEvent *ev)
 void NotificationWidget::setVisible(bool visible)
 {
     qDebug() << Q_FUNC_INFO;
-    if (!visible && m_fader->direction() == QTimeLine::Forward) {
+    if (!visible && m_fading && m_fader->direction() == QTimeLine::Forward) {   // Fading enabled visible false
         m_fader->setDirection(QTimeLine::Backward);
         m_fader->start();
-    } else {
+    } else if (!visible) { // visible false - delete themselves
+        this->deleteLater();
+    } else {    // standart handler
         QWidget::setVisible(visible);
     }
 }
@@ -130,12 +139,18 @@ void NotificationWidget::faderValueChanged(qreal value)
 
 void NotificationWidget::faderFinished()
 {
-    if (m_fader->direction() == QTimeLine::Forward) {
-        // starting timer after fader finish work and widget opacity is 1.0
-        m_timeout->start(3000);
-    } else {
-        // In case of backward direction
-        emit deleted();
-        this->deleteLater();
-    }
+    if (m_fader->direction() == QTimeLine::Forward)
+        m_timeout->start(3000);     // starting timer after fader finish work and widget opacity is 1.0
+    else
+        this->deleteLater();        // In case of backward direction delete themselves
+}
+
+bool NotificationWidget::fading() const
+{
+    return m_fading;
+}
+
+void NotificationWidget::setFading(bool fading)
+{
+    m_fading = fading;
 }

@@ -1,8 +1,5 @@
 #include <QApplication>
-#include <QDebug>
 #include "notificationwidget.h"
-
-
 
 int main(int argc, char *argv[])
 {
