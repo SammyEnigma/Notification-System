@@ -1,5 +1,7 @@
 SOURCES += \
-    notificationwidget.cpp
+    $$PWD/notificationwidget.cpp \
+    $$PWD/notificationmanager.cpp
 
 HEADERS += \
-    notificationwidget.h
+    $$PWD/notificationwidget.h \
+    $$PWD/notificationmanager.h
