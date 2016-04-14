@@ -1,8 +1,8 @@
 #include "notificationmanager.h"
 #include "notificationwidget.h"
 
-NotificationManager::NotificationManager(uint maxWidgets) :
-    m_maxWidgets(maxWidgets),
+NotificationManager::NotificationManager() :
+    m_maxWidgets(3),
     m_widgets(new QList<NotificationWidget*>())
 {
 
@@ -17,6 +17,13 @@ NotificationManager::~NotificationManager()
     }
     delete m_widgets;
     m_widgets = Q_NULLPTR;
+}
+
+void NotificationManager::showNotification(QString title, QString message, QPixmap icon)
+{
+    Q_UNUSED(title)
+    Q_UNUSED(message)
+    Q_UNUSED(icon)
 }
 
 uint NotificationManager::maxWidgets() const

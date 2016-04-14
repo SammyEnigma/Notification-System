@@ -9,8 +9,10 @@ class NotificationManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit NotificationManager(uint maxWidgets = 3);
+    explicit NotificationManager();
     ~NotificationManager();
+
+    void showNotification(QString title, QString message, QPixmap icon = QPixmap());
 
     uint maxWidgets() const;
     void setMaxWidgets(const uint &maxWidgets);
