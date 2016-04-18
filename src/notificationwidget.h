@@ -27,6 +27,7 @@ private slots:
 signals:
     void deleted();
     void clicked();
+    void finished();
 
 private:
     QTimer *m_timeout;

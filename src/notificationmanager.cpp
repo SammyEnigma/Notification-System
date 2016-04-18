@@ -1,5 +1,6 @@
 #include "notificationmanager.h"
 #include "notificationwidget.h"
+#include <QDebug>
 
 NotificationManager::NotificationManager() :
     m_maxWidgets(3),
@@ -34,4 +35,18 @@ uint NotificationManager::maxWidgets() const
 void NotificationManager::setMaxWidgets(const uint &maxWidgets)
 {
     m_maxWidgets = maxWidgets;
+}
+
+void NotificationManager::removeWidget()
+{
+    if (NotificationWidget *widget = qobject_cast<NotificationWidget*>(QObject::sender())) {
+        int index = m_widgets->indexOf(widget);
+        if (index > -1) {
+           NotificationWidget *removed = m_widgets->takeAt(index);
+           delete removed;
+           removed = Q_NULLPTR;
+        }
+    } else {
+        qDebug() << "Failed while casting from QObject* to NotificationWidget*";
+    }
 }

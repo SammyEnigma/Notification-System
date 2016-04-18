@@ -2,6 +2,7 @@
 #define NOTIFICATIONMANAGER_H
 
 #include <QObject>
+#include <QPixmap>
 
 class NotificationWidget;
 
@@ -16,6 +17,9 @@ public:
 
     uint maxWidgets() const;
     void setMaxWidgets(const uint &maxWidgets);
+
+private slots:
+    void removeWidget();
 
 private:
     uint m_maxWidgets;

@@ -86,6 +86,7 @@ NotificationWidget::NotificationWidget(QString title, QString message, QPixmap i
 
 NotificationWidget::~NotificationWidget()
 {
+    qDebug() << Q_FUNC_INFO;
     if (m_timeout->isActive())
         m_timeout->stop();
     delete m_timeout;
@@ -95,8 +96,6 @@ NotificationWidget::~NotificationWidget()
         m_fader->stop();
     delete m_fader;
     m_fader = Q_NULLPTR;
-
-    emit deleted();
 }
 
 void NotificationWidget::showEvent(QShowEvent *ev)
@@ -126,7 +125,8 @@ void NotificationWidget::setVisible(bool visible)
         m_fader->setDirection(QTimeLine::Backward);
         m_fader->start();
     } else if (!visible) { // visible false - delete themselves
-        this->deleteLater();
+        //this->deleteLater();
+        emit finished();
     } else {    // standart handler
         QWidget::setVisible(visible);
     }
@@ -142,7 +142,8 @@ void NotificationWidget::faderFinished()
     if (m_fader->direction() == QTimeLine::Forward)
         m_timeout->start(3000);     // starting timer after fader finish work and widget opacity is 1.0
     else
-        this->deleteLater();        // In case of backward direction delete themselves
+        //this->deleteLater();        // In case of backward direction delete themselves
+        emit finished();
 }
 
 bool NotificationWidget::fading() const
