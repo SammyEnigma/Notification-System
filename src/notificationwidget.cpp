@@ -89,13 +89,11 @@ NotificationWidget::~NotificationWidget()
     qDebug() << Q_FUNC_INFO;
     if (m_timeout->isActive())
         m_timeout->stop();
-    delete m_timeout;
-    m_timeout = Q_NULLPTR;
+    m_timeout->deleteLater();
 
     if (m_fader->state() != QTimeLine::NotRunning)
         m_fader->stop();
-    delete m_fader;
-    m_fader = Q_NULLPTR;
+    m_fader->deleteLater();
 }
 
 void NotificationWidget::showEvent(QShowEvent *ev)

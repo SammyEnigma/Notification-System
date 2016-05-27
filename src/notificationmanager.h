@@ -18,12 +18,18 @@ public:
     uint maxWidgets() const;
     void setMaxWidgets(const uint &maxWidgets);
 
+    QSize widgetSize() const;
+    void setWidgetSize(const QSize &widgetSize);
+
 private slots:
     void removeWidget();
 
 private:
     uint m_maxWidgets;
     QList<NotificationWidget*> *m_widgets;
+    int m_zoom;
+    QSize m_widgetSize; // the size of shown widgets
+    QPoint m_position;  // position on the desktop where the first widget will appear
 };
 
 #endif // NOTIFICATIONMANAGER_H

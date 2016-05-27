@@ -1,20 +1,29 @@
 #include "notificationmanager.h"
 #include "notificationwidget.h"
 #include <QDebug>
+#include <QApplication>
+#include <QScreen>
+#include <QDesktopWidget>
 
 NotificationManager::NotificationManager() :
     m_maxWidgets(3),
     m_widgets(new QList<NotificationWidget*>())
 {
+    // 96 pixels = 1 logical inch. The standart DPI settings 100% (96 DPI)
+    m_zoom = qApp->primaryScreen()->logicalDotsPerInch() / 96.0;
+    m_zoom /= qApp->primaryScreen()->devicePixelRatio();
+    QRect desktopRect = QApplication::desktop()->availableGeometry();
 
+    m_widgetSize = QSize(255 * m_zoom, 100 * m_zoom);
+    m_position = QPoint(desktopRect.width()  - m_widgetSize.width(),
+                        desktopRect.height() - m_widgetSize.height());
 }
 
 NotificationManager::~NotificationManager()
 {
     while (!m_widgets->isEmpty()) {
         NotificationWidget *obj = m_widgets->takeFirst();
-        delete obj;
-        obj = Q_NULLPTR;
+        obj->deleteLater();
     }
     delete m_widgets;
     m_widgets = Q_NULLPTR;
@@ -22,9 +31,13 @@ NotificationManager::~NotificationManager()
 
 void NotificationManager::showNotification(QString title, QString message, QPixmap icon)
 {
-    Q_UNUSED(title)
-    Q_UNUSED(message)
-    Q_UNUSED(icon)
+    NotificationWidget *widget = new NotificationWidget(title, message, icon);
+    widget->setGeometry(QRect(m_position, m_widgetSize));
+    connect(widget, &NotificationWidget::finished, this, &NotificationManager::removeWidget);
+
+    m_widgets->append(widget);
+
+    widget->show();
 }
 
 uint NotificationManager::maxWidgets() const
@@ -43,10 +56,19 @@ void NotificationManager::removeWidget()
         int index = m_widgets->indexOf(widget);
         if (index > -1) {
            NotificationWidget *removed = m_widgets->takeAt(index);
-           delete removed;
-           removed = Q_NULLPTR;
+           removed->deleteLater();
         }
     } else {
         qDebug() << "Failed while casting from QObject* to NotificationWidget*";
     }
+}
+
+QSize NotificationManager::widgetSize() const
+{
+    return m_widgetSize;
+}
+
+void NotificationManager::setWidgetSize(const QSize &widgetSize)
+{
+    m_widgetSize = widgetSize;
 }
