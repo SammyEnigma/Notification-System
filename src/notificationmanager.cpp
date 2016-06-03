@@ -7,7 +7,8 @@
 
 NotificationManager::NotificationManager() :
     m_maxWidgets(3),
-    m_widgets(new QList<NotificationWidget*>())
+    m_widgets(new QList<NotificationWidget*>()),
+    m_offset(0)
 {
     // 96 pixels = 1 logical inch. The standart DPI settings 100% (96 DPI)
     m_zoom = qApp->primaryScreen()->logicalDotsPerInch() / 96.0;
@@ -29,12 +30,16 @@ NotificationManager::~NotificationManager()
     m_widgets = Q_NULLPTR;
 }
 
-void NotificationManager::showNotification(QString title, QString message, QPixmap icon)
+void NotificationManager::showNotification(NotificationWidget * const widget)
 {
-    NotificationWidget *widget = new NotificationWidget(title, message, icon);
-    widget->setGeometry(QRect(m_position, m_widgetSize));
-    connect(widget, &NotificationWidget::finished, this, &NotificationManager::removeWidget);
+    if (widget == Q_NULLPTR)
+        return;
 
+    m_offset = (m_widgets->count() > 0) ? m_offset - 100 * m_zoom : 0;
+    widget->setGeometry(m_position.x(), m_position.y() + m_offset,
+                        m_widgetSize.width(), m_widgetSize.height());
+
+    connect(widget, &NotificationWidget::finished, this, &NotificationManager::removeWidget);
     m_widgets->append(widget);
 
     widget->show();

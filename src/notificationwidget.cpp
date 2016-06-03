@@ -78,8 +78,8 @@ NotificationWidget::NotificationWidget(QString title, QString message, QPixmap i
     container->addWidget(displayWidget);
     setLayout(container);
 
+    m_timeout->setInterval(3000);   // set default value as 3 seconds
     connect(m_timeout, &QTimer::timeout, this, &NotificationWidget::hide);
-
     connect(m_fader, &QTimeLine::valueChanged, this, &NotificationWidget::faderValueChanged);
     connect(m_fader, &QTimeLine::finished, this, &NotificationWidget::faderFinished);
 }
@@ -106,7 +106,7 @@ void NotificationWidget::showEvent(QShowEvent *ev)
         m_fader->setDirection(QTimeLine::Forward);
         m_fader->start();
     } else {
-        m_timeout->start(3000);
+        m_timeout->start();
     }
 }
 
@@ -123,7 +123,6 @@ void NotificationWidget::setVisible(bool visible)
         m_fader->setDirection(QTimeLine::Backward);
         m_fader->start();
     } else if (!visible) { // visible false - delete themselves
-        //this->deleteLater();
         emit finished();
     } else {    // standart handler
         QWidget::setVisible(visible);
@@ -138,9 +137,8 @@ void NotificationWidget::faderValueChanged(qreal value)
 void NotificationWidget::faderFinished()
 {
     if (m_fader->direction() == QTimeLine::Forward)
-        m_timeout->start(3000);     // starting timer after fader finish work and widget opacity is 1.0
+        m_timeout->start();     // starting timer after fader finish work and widget opacity is 1.0
     else
-        //this->deleteLater();        // In case of backward direction delete themselves
         emit finished();
 }
 
@@ -152,4 +150,10 @@ bool NotificationWidget::fading() const
 void NotificationWidget::setFading(bool fading)
 {
     m_fading = fading;
+}
+
+void NotificationWidget::setIntevalHint(const int msec)
+{
+    if (msec > 0)
+        m_timeout->setInterval(msec);
 }

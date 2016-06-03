@@ -14,6 +14,7 @@ public:
 
     bool fading() const;
     void setFading(bool fading);
+    void setIntevalHint(const int msec);
 
 protected:
     void showEvent(QShowEvent *ev) Q_DECL_OVERRIDE;

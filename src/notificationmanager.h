@@ -13,7 +13,7 @@ public:
     explicit NotificationManager();
     ~NotificationManager();
 
-    void showNotification(QString title, QString message, QPixmap icon = QPixmap());
+    void showNotification(NotificationWidget * const widget);
 
     uint maxWidgets() const;
     void setMaxWidgets(const uint &maxWidgets);
@@ -30,6 +30,7 @@ private:
     int m_zoom;
     QSize m_widgetSize; // the size of shown widgets
     QPoint m_position;  // position on the desktop where the first widget will appear
+    int m_offset;       // offset on Oy axis for a new widget position
 };
 
 #endif // NOTIFICATIONMANAGER_H
