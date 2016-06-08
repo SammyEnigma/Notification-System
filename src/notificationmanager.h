@@ -23,6 +23,7 @@ public:
 
 private slots:
     void removeWidget();
+    void updateWidgetsPosition();
 
 private:
     uint m_maxWidgets;

@@ -86,7 +86,6 @@ NotificationWidget::NotificationWidget(QString title, QString message, QPixmap i
 
 NotificationWidget::~NotificationWidget()
 {
-    qDebug() << Q_FUNC_INFO;
     if (m_timeout->isActive())
         m_timeout->stop();
     m_timeout->deleteLater();
@@ -118,7 +117,6 @@ void NotificationWidget::mousePressEvent(QMouseEvent *ev)
 
 void NotificationWidget::setVisible(bool visible)
 {
-    qDebug() << Q_FUNC_INFO;
     if (!visible && m_fading && m_fader->direction() == QTimeLine::Forward) {   // Fading enabled visible false
         m_fader->setDirection(QTimeLine::Backward);
         m_fader->start();

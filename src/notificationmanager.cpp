@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QScreen>
 #include <QDesktopWidget>
+#include <QPropertyAnimation>
 
 NotificationManager::NotificationManager() :
     m_maxWidgets(3),
@@ -36,6 +37,7 @@ void NotificationManager::showNotification(NotificationWidget * const widget)
         return;
 
     m_offset = (m_widgets->count() > 0) ? m_offset - 100 * m_zoom : 0;
+    widget->setMinimumSize(m_widgetSize);
     widget->setGeometry(m_position.x(), m_position.y() + m_offset,
                         m_widgetSize.width(), m_widgetSize.height());
 
@@ -62,9 +64,24 @@ void NotificationManager::removeWidget()
         if (index > -1) {
            NotificationWidget *removed = m_widgets->takeAt(index);
            removed->deleteLater();
+
+           updateWidgetsPosition();
         }
     } else {
         qDebug() << "Failed while casting from QObject* to NotificationWidget*";
+    }
+}
+
+void NotificationManager::updateWidgetsPosition()
+{
+    m_offset = 0;
+    for (auto it = m_widgets->begin(); it != m_widgets->end(); ++it) {
+        QPropertyAnimation *animation = new QPropertyAnimation(*it, "pos");
+        animation->setDuration(200);
+        animation->setStartValue((*it)->pos());
+        animation->setEndValue(QPoint(m_position.x(), m_position.y() + m_offset));
+        animation->start();
+        m_offset -= 100 * m_zoom;
     }
 }
 
