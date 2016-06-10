@@ -9,7 +9,8 @@
 NotificationManager::NotificationManager() :
     m_maxWidgets(3),
     m_widgets(new QList<NotificationWidget*>()),
-    m_offset(0)
+    m_offset(0),
+    m_curve(QEasingCurve::InCubic)
 {
     // 96 pixels = 1 logical inch. The standart DPI settings 100% (96 DPI)
     m_zoom = qApp->primaryScreen()->logicalDotsPerInch() / 96.0;
@@ -80,9 +81,20 @@ void NotificationManager::updateWidgetsPosition()
         animation->setDuration(200);
         animation->setStartValue((*it)->pos());
         animation->setEndValue(QPoint(m_position.x(), m_position.y() + m_offset));
+        animation->setEasingCurve(m_curve);
         animation->start();
         m_offset -= 100 * m_zoom;
     }
+}
+
+QEasingCurve NotificationManager::curve() const
+{
+    return m_curve;
+}
+
+void NotificationManager::setCurve(const QEasingCurve &curve)
+{
+    m_curve = curve;
 }
 
 QSize NotificationManager::widgetSize() const

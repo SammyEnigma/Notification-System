@@ -21,6 +21,9 @@ public:
     QSize widgetSize() const;
     void setWidgetSize(const QSize &widgetSize);
 
+    QEasingCurve curve() const;
+    void setCurve(const QEasingCurve &curve);
+
 private slots:
     void removeWidget();
     void updateWidgetsPosition();
@@ -32,6 +35,7 @@ private:
     QSize m_widgetSize; // the size of shown widgets
     QPoint m_position;  // position on the desktop where the first widget will appear
     int m_offset;       // offset on Oy axis for a new widget position
+    QEasingCurve m_curve;
 };
 
 #endif // NOTIFICATIONMANAGER_H
